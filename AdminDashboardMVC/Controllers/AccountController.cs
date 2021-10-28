@@ -58,7 +58,7 @@ namespace AdminDashboardMVC.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View(new LoginViewModel() { RememberMe = false});
+            return View(new LoginViewModel() { Email = "jaxons.danniels@company.com", Password = "User*123", RememberMe = false });
         }
 
         //

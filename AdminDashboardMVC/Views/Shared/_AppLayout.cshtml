@@ -1,0 +1,147 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var routeUrl = Url.RouteUrl(ViewContext.RouteData.Values);
+    var itemStyle = "";
+    if ((string)ViewData["Title"] == "Overview")
+    {
+        itemStyle = "display:none";
+    }
+}
+
+@(Html.Kendo().Drawer()
+	.Name("drawer")
+	.TemplateId("drawerTemplate")
+	.Mode("push")
+	.Mini(false)
+	.Position("left")
+	.Width(240)
+	.Navigatable(true)
+	.Events(ev => ev.ItemClick("onItemClick"))
+	.Content(@<text>
+		<div>
+			<main role="main" class="k-content">
+				@(Html.Kendo().AppBar()
+				   .Name("appbar")
+				   .ThemeColor(AppBarThemeColor.Inherit)
+				   .HtmlAttributes(new { style = "height: 48px" })
+				   .Items(items =>
+				   {
+					   items.Add().Template("<span id='menuIcon' href='\\#'><span class='k-icon k-i-menu' onclick='toggleDrawer()'></span></span>").Type(AppBarItemType.ContentItem);
+					   items.Add().Type(AppBarItemType.Spacer).Width("16px");
+					   items.Add().Template("<div class='title'>" + @ViewData["Title"] + "</div>").Type(AppBarItemType.ContentItem);
+					   items.Add().Type(AppBarItemType.Spacer);
+					   items.Add().Template("<div class='app-bar-link'><span class='k-icon k-i-notification'><span data-role='badge' class='k-badge k-badge-solid k-badge-error k-badge-md k-badge-dot k-badge-outside k-top-end'></span></span></div>").Type(AppBarItemType.ContentItem);
+					   items.Add().Type(AppBarItemType.Spacer).Width("8px");
+					   items.Add().Template("<a href='" + @Url.Action("About", "Home") + "' class='k-link app-bar-link'>About</a>").Type(AppBarItemType.ContentItem);
+					   items.Add().Template("<a href='" + @Url.Action("Contact", "Home") + "' class='k-link app-bar-link'>Contact</a>").Type(AppBarItemType.ContentItem);
+				   })
+				)
+
+				@RenderBody()
+			</main>
+		</div>
+	</text>)
+)
+
+<script id="drawerTemplate" type="text/html">
+    <div class="k-d-flex-col k-align-items-center k-justify-content-evenly" style="height:218px;">
+        <div class="k-avatar k-avatar-circle k-avatar-image k-avatar-lg" id="avatar"><img src='@Url.Content("~/Content/assets/navigation/Avatar.svg")' /></div>
+
+        <form class="form-inline" action="@Url.Action("LogOff", "Account")" method="post">
+            <button type="submit" class="k-button k-secondary k-state-active">Logout</button>
+        </form>
+    </div>
+    <ul>
+        <li><a class="k-link" href="@Url.Action("Index", "Home")" data-role='drawer-item'><span class="k-icon k-i-grid "></span>Dashboard</a></li>
+        <li><a class="k-link" href="@Url.Action("Performance", "Home")" data-role='drawer-item'><span class="k-icon k-i-globe"></span>Performance and Sales</a></li>
+        <li><a class="k-link" href="@Url.Action("Products", "Home")" data-role='drawer-item'><span class="k-icon k-i-aggregate-fields"></span>Products</a></li>
+        <li data-role='drawer-separator'></li>
+        <li><a class="k-link" href="@Url.Action("Settings", "Home")" data-role='drawer-item'><span class="k-icon k-i-gear"></span>Settings</a></li>
+    </ul>
+</script>
+
+<style>
+    #name {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    #email {
+        font-size: 12px;
+        text-decoration-line: underline;
+    }
+
+    #menuIcon {
+        cursor: pointer;
+    }
+
+    .title {
+        font-size: 18px;
+        line-height: 20px;
+        color: #2D73F5;
+    }
+
+    .app-bar-link {
+        font-size: 14px;
+        line-height: 20px;
+        color: #424242;
+        cursor: pointer;
+    }
+
+    li[data-role='drawer-item'] > a {
+        color: #424242;
+    }
+
+    li.k-state-selected[data-role='drawer-item'] > a {
+        color: #FFFFFF;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        //highlight selected Drawer item on page load
+        $('a[href="@routeUrl"]').parent().addClass('k-state-selected');
+        //show Drawer as expanded on page load
+        $('.k-drawer-container').addClass('k-drawer-expanded');
+        $('.k-drawer-wrapper').css('width', '240px');
+        if ($(window).width() < 600) {
+            $("#drawer").getKendoDrawer().hide()
+            $('.k-drawer-container').removeClass('k-drawer-expanded');
+        }
+        resizeWidgets()
+        $(window).resize(function () {
+            resizeWidgets()
+        })
+    })
+	function toggleDrawer(e) {
+        var drawerInstance = $("#drawer").getKendoDrawer();
+        var drawerContainer = drawerInstance.drawerContainer;
+        if (drawerContainer.hasClass("k-drawer-expanded")) {
+            drawerInstance.hide();
+            $('.k-drawer-container').removeClass('k-drawer-expanded');
+        } else {
+            drawerInstance.show();
+        }
+        //resize widgets after Drawer animmation has completed
+        setTimeout(resizeWidgets,400)
+    }
+    function onItemClick(e) {
+        if (!e.item.hasClass("k-drawer-separator")) {
+            var targetPage = e.item.find("a").attr("href");
+            window.location.href = targetPage;
+        }
+    }
+    function resizeWidgets() {
+        var charts = $(".k-chart");
+        if (charts) {
+            charts.each((idx, elem) => $(elem).getKendoChart().resize(true))
+        }
+        var grid = $(".k-grid");
+        if (grid) {
+            grid.each((idx, elem) => $(elem).getKendoGrid().resize(true))
+        }
+    }
+</script>

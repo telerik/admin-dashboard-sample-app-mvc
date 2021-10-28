@@ -1,0 +1,278 @@
+﻿@using AdminDashboardMVC.Models
+@using System.Security.Principal
+
+@{
+    ViewData["Title"] = "Overview";
+    Layout = "/Views/Shared/_AppLayout.cshtml";
+
+    var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+}
+
+<div class="k-d-flex-col k-justify-content-center">
+    <div class="greeting">
+        @*Hello Again, @userName*@
+    </div>
+
+    <script id="tasks-ontrack-template" type="text/html">
+        <div style="font-size: 84px; line-height: 101px; color: \\#37B400">22</div>
+        <div class="k-card-title">In Backlog: 43</div>
+    </script>
+    <script id="overdue-tasks-template" type="text/html">
+        <div style="font-size: 84px; line-height: 101px; color: \\#F31700">7</div>
+        <div class="k-card-title">From Yesterday: 16</div>
+    </script>
+    <script id="issues-template" type="text/html">
+        <div style="font-size: 84px; line-height: 101px; color: \\#FFC000">47</div>
+        <div class="k-card-title">Closed By Team: 15</div>
+    </script>
+    <script id="used-space-template" type="text/html">
+        <div>
+            @(Html.Kendo().ArcGauge()
+				.Name("gauge")
+				.Value(50)
+				.Scale(x => x.Min(0).Max(100))
+				.CenterTemplate("<span style='color:\\\\\\#0058E9;font-size:28px;font-weight: bold;'>\\#:value\\#%</span>")
+				.GaugeArea(ga => ga.Height(80))
+				.Color("\\#0058E9")
+				.ToClientTemplate()
+			)
+        </div>
+        <div class="k-card-title">25 of 50GB Used</div>
+    </script>
+
+    <script id="total-points-header-template" type="text/html">
+        <span class="k-card-title">Sales</span>
+        <span class="k-scheduler-navigation k-button-group"><button class="k-button k-nav-today" title="Today"><span class="k-button-text">Today</span></button><button class="k-button k-button-icon k-icon-button k-nav-prev" title="Previous" aria-label="Previous"><span class="k-icon k-i-arrow-60-left"></span></button><button class="k-button k-button-icon k-icon-button k-nav-next" title="Next" aria-label="Next"><span class="k-icon k-i-arrow-60-right"></span></button></span>
+        <span><span class="k-icon k-i-calendar"></span><span>@DateTime.Now.ToLongDateString()</span></span>
+        <span class="k-spacer k-toolbar-spacer"></span>
+        @(Html.Kendo().ButtonGroup()
+			.Name("total-points-header-options")
+			.Items(t =>
+			{
+				t.Add().Text("Revenue").HtmlAttributes(new Dictionary<string, object> { ["class"] = "k-primary" });
+				t.Add().Text("Sales Count");
+			})
+			.HtmlAttributes(new { style = "float:right;" })
+			.Events(ev => ev.Select("onChartChange"))
+			.ToClientTemplate()
+		)
+    </script>
+
+    <script id="total-points-template" type="text/html">
+        <div style="width:100%;">
+            @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.SalesByDateViewModel>()
+				.Name("chart")
+				.Title("Gross domestic product growth /GDP annual %/")
+				.Legend(legend => legend
+					.Position(ChartLegendPosition.Bottom)
+					.Align(ChartLegendAlign.Center)
+					.Margin(0, 200, 0, 0)
+				)
+				.ChartArea(chartArea => chartArea
+					.Background("transparent")
+				)
+				.DataSource(ds =>
+				{
+					ds.Read(read => read.Action("GetSales", "Home")
+					.Data("onAdditionalChartData"))
+					.Group(group => group.Add(model => model.Region));
+				})
+				.SeriesDefaults(seriesDefaults =>
+					seriesDefaults.Line()
+				)
+				.Series(series =>
+				{
+					series.Line(model => model).CategoryField("Date").Field("Sum");
+				})
+				.CategoryAxis(axis => axis.Labels(labels => labels.Format("MMM")))
+				.ValueAxis(axis => axis
+					.Numeric().Labels(labels => labels.Template("\\#return getTemplate(value)\\#"))
+				)
+				.ToClientTemplate()
+			)
+        </div>
+    </script>
+
+    <script id="mk-team-header-template" type="text/html">
+        <span class="k-card-title">All Employees</span>
+        <span class="k-spacer k-toolbar-spacer"></span>
+        @(Html.Kendo().ButtonGroup()
+			.Name("mk-team-header-options")
+			.Items(t =>
+			{
+				t.Add().Text("My Team").HtmlAttributes(new Dictionary<string, object> { ["class"] = "k-primary" });
+				t.Add().Text("All Teams");
+			})
+			.HtmlAttributes(new { style = "float:right;" })
+			.Events(ev => ev.Select("buttonGroupSelectHandler"))
+			.ToClientTemplate()
+		)
+    </script>
+
+    <script id="mk-team-template" type="text/html">
+        @(Html.Kendo().Grid<AdminDashboardMVC.Models.Employees.EmployeeViewModel>()
+			.Name("grid")
+			.Columns(columns =>
+			{
+				columns.Group(group => group
+					.Title("Employee")
+					.Columns(employee =>
+					{
+						employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-circle k-avatar-image k-avatar-sm'><img src='" + @Url.Content("../Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
+						employee.Bound(x => x.JobTitle);
+					})
+				);
+				columns.Group(group => group
+					.Title("Performance")
+					.Columns(employee =>
+					{
+						employee.Bound(x => x.Rating).HtmlAttributes(new Dictionary<string, object> { ["style"] = "text-align:center" }).ClientTemplate("<input id='rating_\\#=Id\\#' class='ratingInGrid' />");
+						employee.Bound(x => x.Budget).Format("{0:c}").ClientTemplate("\\#= getBudgetTemplate(data)\\#");
+					})
+				);
+			})
+			.ToolBar(t =>
+			{
+				t.Search();
+				t.Excel();
+				t.Pdf();
+			})
+			.Search(s =>
+			{
+				s.Field(c => c.FullName);
+				s.Field(c => c.JobTitle);
+			})
+			.Groupable()
+			.Pageable(p => p.ButtonCount(5).Input(true))
+			.Sortable()
+			.Scrollable()
+			.HtmlAttributes(new { style = "height:650px;" })
+			.DataSource(dataSource => dataSource
+				.Ajax()
+				.PageSize(7)
+				.Read(read => read.Action("Read", "Home").Data("onAdditionalData"))
+			)
+			.Events(ev => ev.DataBound("onDataBound"))
+			.ToClientTemplate()
+		)
+
+    </script>
+
+    @(Html.Kendo().TileLayout()
+		.Name("dashboard-tilelayout")
+		.Columns(4)
+		.Resizable(true)
+		.Reorderable(true)
+		.RowsHeight("230px")
+		.ColumnsWidth("25%")
+		.Containers(c =>
+		{
+			c.Add().Header(h => h.Template("<span class=k-card-title>Tasks On Track</span><span style='float:right' class='k-icon k-i-more-vertical'></span>")).BodyTemplateId("tasks-ontrack-template").ColSpan(1).RowSpan(1);
+			c.Add().Header(h => h.Template("<span class=k-card-title>Overdue Tasks</span><span style='float:right' class='k-icon k-i-more-vertical'></span>")).BodyTemplateId("overdue-tasks-template").ColSpan(1).RowSpan(1);
+			c.Add().Header(h => h.Template("<span class=k-card-title>Issues</span><span style='float:right' class='k-icon k-i-more-vertical'></span>")).BodyTemplateId("issues-template").ColSpan(1).RowSpan(1);
+			c.Add().Header(h => h.Template("<span class=k-card-title>Used Space</span><span style='float:right' class='k-icon k-i-more-vertical'></span>")).BodyTemplateId("used-space-template").ColSpan(1).RowSpan(1);
+			c.Add().Header(h => h.TemplateId("total-points-header-template")).BodyTemplateId("total-points-template").ColSpan(4).RowSpan(2);
+			c.Add().Header(h => h.TemplateId("mk-team-header-template")).BodyTemplateId("mk-team-template").ColSpan(4).RowSpan(3);
+		})
+		.Events(e => e.Resize("onTileResize"))
+	)
+
+</div>
+
+<script>
+    function getTemplate(value) {
+        var selectedOption = $('#total-points-header-options').getKendoButtonGroup().current().index();
+        if (selectedOption != 1) {
+            return kendo.toString(value, "c")
+        }
+        else return kendo.toString(value, "n0")
+    }
+    function onChartChange(e) {
+        e.sender.element.children().removeClass('k-primary');
+        $(e.sender.element.children()[e.indices]).addClass('k-primary');
+        $("#chart").getKendoChart().dataSource.read();
+    }
+    function buttonGroupSelectHandler(e) {
+        e.sender.element.children().removeClass('k-primary');
+        $(e.sender.element.children()[e.indices]).addClass('k-primary');
+        $("#grid").getKendoGrid().dataSource.read();
+    }
+    function onAdditionalChartData() {
+        var selectedOption = $('#total-points-header-options').getKendoButtonGroup().current().index();
+        return {
+            __RequestVerificationToken: forgeryToken().__RequestVerificationToken,
+            type: selectedOption
+        }
+    }
+    function onAdditionalData() {
+        var selectedTeam = $('#mk-team-header-options').getKendoButtonGroup().current().index();
+        return {
+            __RequestVerificationToken: forgeryToken().__RequestVerificationToken,
+            team: selectedTeam
+        }
+    }
+    function getBudgetTemplate(dataItem) {
+        if (dataItem.Budget < 0) {
+            return '<span class="negativeBudget">-' + kendo.format("{0:c}", Math.abs(dataItem.Budget)) + '</span>';
+        }
+        else return kendo.format("{0:c}", dataItem.Budget)
+    }
+    function onTileResize(e) {
+        // for widgets that do not auto resize
+        // https://docs.telerik.com/kendo-ui/styles-and-layout/using-kendo-in-responsive-web-pages
+        kendo.resize(e.container, true);
+    }
+    function onDataBound(e) {
+        var items = e.sender.items();
+        items.each((item, element) => createRating(item, element))
+    }
+    function createRating(item, element) {
+        var grid = $("#grid").getKendoGrid();
+        var dataItem = grid.dataItem(element);
+        var rating = $(element).find('.ratingInGrid');
+        rating.kendoRating({
+            min: 1,
+            max: 5,
+            value: dataItem.Rating,
+            label: false,
+            enabled: false
+        });
+    }
+    function getId(id) {
+        return (id % 9) + 1
+    }
+    function forgeryToken() {
+        return kendo.antiForgeryTokens();
+    }
+</script>
+<style>
+    .negativeBudget {
+        color: #FF6358;
+    }
+
+    .k-tilelayout-item-body.k-card-body:nth-child(-n+4) {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #dashboard-tilelayout .k-card-header {
+        border-style: none;
+    }
+
+    .k-card-title {
+        font-size: 20px;
+    }
+
+    .k-tilelayout-item-body .k-grid {
+        margin-top: -10px;
+    }
+
+    .greeting {
+        font-weight: 300;
+        font-size: 28px;
+        line-height: 37px;
+        padding: 16px;
+    }
+</style>

@@ -1,0 +1,202 @@
+﻿@model AdminDashboardMVC.Models.UserSettings.UserDetailsModel
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "/Views/Shared/_AppLayout.cshtml";
+}
+
+<script id="info-template" type="text/html">
+    <div class="k-d-flex-col">
+        <div class="k-align-items-start">
+            @(Html.Kendo().Button()
+				.Name("account-button")
+				.HtmlAttributes(new { type = "button", @class = "k-primary k-flat k-state-selected" })
+				.Icon("user")
+				.Content("Account")
+				.ToClientTemplate()
+			)
+            @(Html.Kendo().Button()
+				.Name("security-button")
+				.HtmlAttributes(new { type = "button", @class = "k-secondary k-flat" })
+				.Icon("lock")
+				.Content("Security")
+				.ToClientTemplate()
+			)
+            @(Html.Kendo().Button()
+				.Name("billing-button")
+				.HtmlAttributes(new { type = "button", @class = "k-secondary k-flat" })
+				.Icon("file-txt")
+				.Content("Billing")
+				.ToClientTemplate()
+			)
+            @(Html.Kendo().Button()
+				.Name("notification-button")
+				.HtmlAttributes(new { type = "button", @class = "k-secondary k-flat" })
+				.Icon("notification")
+				.Content("Notifications")
+				.ToClientTemplate()
+			)
+            <div class="k-separator">&nbsp;</div>
+        </div>
+
+        <div class="k-d-flex-row k-justify-content-around">
+            <span class="k-icon k-i-user" style="font-size:2em;"></span>
+            <span class="k-icon k-i-information" style="font-size:2em;"></span>
+            @(Html.Kendo().Form<AdminDashboardMVC.Models.UserSettings.UserDetailsModel>()
+				.Name("UserInformationForm")
+				.Layout("grid")
+				.FormData(Model)
+				.Validatable(v =>
+				{
+					v.ValidateOnBlur(false);
+					v.ValidationSummary(vs => vs.Enable(false));
+				})
+				.HtmlAttributes(new { method = "POST", style = "width: 90%;" })
+				.Grid(g => g.Cols(2).Gutter(20))
+				.Items(items =>
+				{
+					items.Add().Field(f => f.Username).Label("Username");
+					items.Add().Field(f => f.Email).Label("Email Address");
+					items.Add().Field(f => f.Nickname).Label("Nickname");
+					items.Add().Field(f => f.Phone).Label("Phone Number")
+						.Editor(e => e.MaskedTextBox().Mask("(+9) 0000-000-00-00"));
+					items.Add().Field(f => f.BirthDate)
+						.Editor(e => e.DateInput().Format("{0:MM|dd|yy}")).Label("Birth Date");
+					items.Add().Field(f => f.Country).Label("Country")
+						.Editor(e => e.DropDownList()
+							.DataTextField("Text")
+							.DataValueField("Value")
+							.BindTo(new List<SelectListItem>() {
+								new SelectListItem() {
+									Text = "USA",
+									Value = "1"
+								},
+								new SelectListItem() {
+									Text = "United Kingdom",
+									Value = "2"
+								},
+								new SelectListItem() {
+									Text = "Bulgaria",
+									Value = "3"
+								}
+							})
+					);
+					items.Add().Field(f => f.Website).Label("Website");
+					items.Add().Field(f => f.WorkPhone).Label("Phone Number")
+						.Editor(e => e.MaskedTextBox().Mask("(+9) 0000-000-00-00"));
+				})
+				.ButtonsTemplateId("formButtons")
+				.Deferred()
+				.ToClientTemplate()
+			)
+        </div>
+    </div>
+</script>
+
+<script id="formButtons" type="text/x-kendo-template">
+	<div>
+		@(Html.Kendo().Switch()
+			.Name("switch")
+			.Checked(true)
+			.ToClientTemplate()
+		)
+		<span>Public Profile</span>
+	</div>
+	<button class="k-button k-primary k-form-submit k-state-disabled" type="submit">Save Changes</button>
+</script>
+
+<script id="date-template" type="text/html">
+    <div style="display:flex; justify-content:center; flex-direction:row; align-content:center">
+        @(Html.Kendo().Calendar()
+			.Name("calendar")
+			.ComponentType("modern")
+			.WeekNumber(true)
+			.ToClientTemplate()
+		)
+    </div>
+</script>
+
+<script id="weather-header-template" type="text/html">
+    <span class="k-card-title">Weather</span>
+    <span class="k-spacer k-toolbar-spacer"></span>
+    <a class="k-card-title k-link" style="float: right;"><span class="k-icon k-i-globe" style="margin-right:9px;"></span><span>Sofia</span></a>
+</script>
+
+<script id="weather-template" type="text/html">
+    <div class="k-d-flex-col k-align-items-center k-justify-content-around">
+        <div style="width: 100px; height: 100px; background-image: url(../Content/assets/settings/cloud.svg)"></div>
+        <div class="k-state-disabled">Partly Cloudy</div>
+        <div style="font-family: 'Roboto'; font-size: 70px; line-height: 84px;">12 &\\#176;C</div>
+    </div>
+    <div class="k-card-footer">
+        <div class="weather-data-container k-d-flex-row k-align-items-center k-justify-content-center">
+            <div>
+                Humidity:<br>
+                Dew:<br>
+                Pressure:<br>
+                Wind Speed:
+            </div>
+            <div>
+                76%<br>
+                2˚C<br>
+                1031mb<br>
+                12km/h NW
+            </div>
+        </div>
+    </div>
+</script>
+
+@(Html.Kendo().TileLayout()
+	.Name("settings")
+	.Columns(3)
+	.Resizable(true)
+	.Reorderable(true)
+	.RowsHeight("400px")
+	.ColumnsWidth("33%")
+	.Containers(c =>
+	{
+		c.Add().BodyTemplateId("info-template").ColSpan(2).RowSpan(2);
+		c.Add().Header(h => h.Template("<span class='k-card-title'>Date</span>")).BodyTemplateId("date-template").ColSpan(1).RowSpan(1);
+		c.Add().Header(h => h.TemplateId("weather-header-template")).BodyTemplateId("weather-template").ColSpan(1).RowSpan(1);
+	})
+)
+@(Html.Kendo().DeferredScripts())
+<style>
+    #settings .k-card-header {
+        border-style: none;
+    }
+
+    .weather-data-container {
+        padding: 8px 0px 0px;
+        gap: 18px
+    }
+
+        .weather-data-container > div {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+        }
+
+            .weather-data-container > div:nth-child(1) {
+                font-weight: bold;
+                text-align: right;
+            }
+
+    #UserInformationForm > div.k-form-buttons {
+        justify-content: space-between;
+    }
+
+    .k-align-items-start .k-separator {
+        margin: 8px 0px 0px 0px;
+    }
+
+    .k-d-flex-row .k-i-user {
+        top: 20px;
+        left: 20px;
+    }
+
+    .k-d-flex-row .k-i-information {
+        top: 200px;
+        left: -30px;
+    }
+</style>

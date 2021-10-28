@@ -1,0 +1,352 @@
+﻿@model AdminDashboardMVC.Models.Sales.PerformanceViewModel
+
+@{
+    Layout = "/Views/Shared/_AppLayout.cshtml";
+    ViewData["Title"] = "Performance & Sales";
+
+    var daysOfWeek = Enum.GetNames(typeof(System.DayOfWeek))
+        .Select(x => x.ToString())
+        .ToArray();
+}
+
+<script id="sales-revenue-template" type="text/html">
+    <div>
+        @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.SalesByDateViewModel>()
+			.Name("areaChart")
+			.HtmlAttributes(new { style = "height: 300px;" })
+			.Legend(legend => legend
+				.Position(ChartLegendPosition.Bottom)
+				.Align(ChartLegendAlign.Center)
+				.Margin(0, 200, 0, 0)
+			)
+			.ChartArea(chartArea => chartArea
+				.Background("transparent")
+			)
+			.DataSource(ds =>
+			{
+				ds.Read(read => read.Action("GetPerformanceSales", "Home")
+				.Data("forgeryToken"))
+				.Group(group => group.Add(model => model.Region));
+			})
+			.SeriesDefaults(seriesDefaults =>
+				seriesDefaults.Area()
+			)
+			.Series(series =>
+			{
+				series.Area(model => model).CategoryField("Date").Field("Sum").Line(l => l.Style(ChartAreaStyle.Normal));
+			})
+			.CategoryAxis(axis =>
+			{
+				axis.Date().Labels(labels => labels.Format("MMM"));
+			})
+			.ValueAxis(axis => axis
+				.Numeric().Labels(labels => labels.Format("{0:c}"))
+			)
+			.ToClientTemplate()
+		)
+
+    </div>
+</script>
+<script id="performance-template" type="text/html">
+    @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.Sale>()
+        .Name("performanceChart")
+        .HtmlAttributes(new { style = "height: 300px;" })
+        .SeriesColors(new string[] { "\\#28B4C8", "\\#2D73F5", "\\#AA46BE" })
+        .Legend(legend => legend
+            .Position(ChartLegendPosition.Bottom)
+            .Labels(l => l.Template("\\#= data.series._groupValue\\#"))
+        )
+        .ChartArea(chartArea => chartArea
+            .Background("transparent")
+        )
+        .CategoryAxis(axis =>
+        {
+            axis.Categories(daysOfWeek);
+        })
+        .DataSource(ds =>
+        {
+            ds.Read(read => read.Action("GetSalesPreferences", "Home")
+            .Data("forgeryToken"))
+            .Group(group => group.Add(model => model.PaymentType));
+        })
+        .SeriesDefaults(seriesDefaults =>
+            seriesDefaults.Area()
+        )
+        .Series(series =>
+        {
+            series.RangeColumn(model => model.Min, model => model.Max).Gap(10).Labels(l => l.Visible(false));
+        })
+        .ToClientTemplate()
+	)
+</script>
+<script id="monthly-sales-template" type="text/html">
+    <div class="k-d-flex-row k-justify-content-center k-align-items-center" style="height:100%">
+        <div class="k-d-flex-col k-justify-content-evenly k-align-items-center" style="width: 300px; height: 200px;">
+            @(Html.Kendo().CircularGauge()
+				.Name("activeGauge")
+				.Color("\\#FF6358")
+				.Value(@Model.LastThreeMonthsSalesCount)
+				.GaugeArea(ga => ga.Height(100).Width(100))
+				.Scale(x =>
+					x.Min(0).Max(@Model.Target).StartAngle(270)
+				)
+				.CenterTemplate("\\#: value/1000 \\#k")
+				.ToClientTemplate()
+			)
+            <div class="sales k-card-title">Total Sales</div>
+            <div class="sales k-card-title">@Model.Target.ToString("N")</div>
+        </div>
+        <div class="k-d-flex-col k-justify-content-evenly k-align-items-center" style="width:300px; height:200px;">
+            @(Html.Kendo().CircularGauge()
+				.Name("inactiveGauge")
+				.Color("\\#666666")
+				.Value(@Model.LastMonthSalesCount)
+				.GaugeArea(ga => ga.Height(100).Width(100))
+				.Scale(x =>
+					x.Min(0).Max(@Model.Target).StartAngle(270)
+				)
+				.CenterTemplate("\\#: value/1000 \\#k")
+				.ToClientTemplate()
+			)
+            <div class="sales k-card-title">Monthly Sales</div>
+            <div class="sales k-card-title">@Model.LastMonthSalesCount.ToString("N")</div>
+        </div>
+    </div>
+</script>
+<script id="weekly-sales-template" type="text/html">
+    <div class="k-d-flex-row k-justify-content-center k-align-items-center" style="height:100%">
+        <div class="k-d-flex-col k-justify-content-evenly k-align-items-center" style="width: 300px; height: 200px;">
+            @(Html.Kendo().CircularGauge()
+				.Name("activeGaugeWeek")
+				.Color("\\#FF6358")
+				.Value(@Model.LastMonthSalesCount)
+				.GaugeArea(ga => ga.Height(100).Width(100))
+				.Scale(x =>
+					x.Min(0).Max(@Model.LastThreeMonthsSalesCount).StartAngle(270)
+				)
+				.CenterTemplate("\\#: value/1000 \\#k")
+				.ToClientTemplate()
+			)
+            <div class="sales k-card-title">Monthly Sales</div>
+            <div class="sales k-card-title">@Model.LastMonthSalesCount.ToString("N")</div>
+        </div>
+        <div class="k-d-flex-col k-justify-content-evenly k-align-items-center" style="width:300px; height:200px;">
+            @(Html.Kendo().CircularGauge()
+				.Name("inactiveGaugeWeek")
+				.Color("\\#666666")
+				.Value(@Model.TotalSalesPerWeekCount)
+				.GaugeArea(ga => ga.Height(100).Width(100))
+				.Scale(x =>
+					x.Min(0).Max(@Model.LastMonthSalesCount).StartAngle(270)
+				)
+				.CenterTemplate("\\#: value/1000 \\#k")
+				.ToClientTemplate()
+			)
+            <div class="sales k-card-title">Weekly Sales</div>
+            <div class="sales k-card-title">
+                @Model.TotalSalesPerWeekCount.ToString("N")</>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="europe-template" type="text/html">
+    @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.SalesPerRegionViewModel>()
+		.Name("europeChart")
+		.HtmlAttributes(new { style = "height: 300px;" })
+		.Legend(legend => legend
+			.Visible(false)
+			.Position(ChartLegendPosition.Top)
+		)
+		.ChartArea(chartArea => chartArea
+			.Background("transparent")
+			.Margin(0, 20, 0, 0)
+		)
+		.SeriesDefaults(seriesDefaults =>
+			seriesDefaults.Bar().Gap(4).Stack(ChartStackType.Stack100)
+		)
+		.CategoryAxis(axis =>
+		{
+			axis.Line(l => l.Visible(false))
+				.MajorGridLines(ml => ml.Visible(false))
+				.Labels(labels => labels.Font("bold 12px  Roboto,sans-serif").Position(ChartAxisLabelsPosition.Start).Color("\\#424242"));
+		})
+		.ValueAxis(axis => axis
+			.Numeric()
+			.Labels(labels => labels.Font("bold 12px  Roboto,sans-serif").Position(ChartAxisLabelsPosition.Start).Color("\\#8F8F8F"))
+			.MajorGridLines(ml => ml.Visible(false))
+			.Line(l => l.Visible(false))
+		)
+		.DataSource(ds =>
+		{
+			ds.Read(read => read.Action("GetSalesPerRegion", "Home", new { region = "EMEA" }).Data("forgeryToken"))
+			.Sort(group => group.Add(model => model.Completed).Ascending());
+		})
+		.Series(series =>
+		{
+			series.Bar(model => model.Completed).CategoryField("Country").ColorField("Color");
+			series.Bar(model => model.NotCompleted)
+				.CategoryField("Country")
+				.Gap(10)
+				.Color("rgba(0, 0, 0, 0.08)")
+				.Spacing(0.2)
+				.Labels(labels => labels.Visible(true).Font("bold 14px  Arial,Helvetica,sans-serif").Template("\\#= kendo.toString(100-value,'n0') \\#%").Color("\\#424242"))
+				.Border(b => b.Width(1).Color("rgba(0, 0, 0, 0.08)")); ;
+		})
+		.ToClientTemplate()
+	)
+</script>
+
+<script id="global-template" type="text/html">
+    @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.SalesPerRegionViewModel>()
+		.Name("globalChart")
+		.HtmlAttributes(new { style = "height: 300px;" })
+		.Legend(legend => legend
+			.Visible(false)
+			.Position(ChartLegendPosition.Top)
+		)
+		.ChartArea(chartArea => chartArea
+			.Background("transparent")
+			.Margin(0, 20, 0, 0)
+		)
+		.SeriesDefaults(seriesDefaults =>
+			seriesDefaults.Bar().Gap(4).Stack(ChartStackType.Stack100)
+		)
+		.CategoryAxis(axis =>
+		{
+			axis.Line(l => l.Visible(false))
+				.MajorGridLines(ml => ml.Visible(false))
+				.Labels(labels => labels.Font("bold 12px  Roboto,sans-serif").Position(ChartAxisLabelsPosition.Start).Color("\\#424242"));
+		})
+		.ValueAxis(axis => axis
+			.Numeric()
+			.Labels(labels => labels.Font("bold 12px  Roboto,sans-serif").Position(ChartAxisLabelsPosition.Start).Color("\\#8F8F8F"))
+			.MajorGridLines(ml => ml.Visible(false))
+			.Line(l => l.Visible(false))
+		)
+		.DataSource(ds =>
+		{
+			ds.Read(read => read.Action("GetSalesPerRegion", "Home", new { region = "Global" }).Data("forgeryToken"))
+			.Sort(group => group.Add(model => model.Completed).Ascending());
+		})
+		.Series(series =>
+		{
+			series.Bar(model => model.Completed).CategoryField("Country").ColorField("Color");
+			series.Bar(model => model.NotCompleted)
+				.CategoryField("Country")
+				.Gap(10)
+				.Color("rgba(0, 0, 0, 0.08)")
+				.Spacing(0.2)
+				.Labels(labels => labels.Visible(true).Font("bold 14px  Arial,Helvetica,sans-serif").Template("\\#= kendo.toString(100-value,'n0') \\#%").Color("\\#424242"))
+				.Border(b => b.Width(1).Color("rgba(0, 0, 0, 0.08)"));
+		})
+		.ToClientTemplate()
+	)
+</script>
+
+<script id="cost-template" type="text/html">
+    @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.Sale>()
+        .Name("costChart")
+        .HtmlAttributes(new { style = "height: 300px;" })
+        .Legend(legend => legend
+            .Position(ChartLegendPosition.Right)
+            .Item(i => i.Visual("labelVisual"))
+            .Labels(labels => labels.Font("bold 14px  Arial,Helvetica,sans-serif").Template("\\#: text \\# | \\#:kendo.toString(value, 'c0')\\#"))
+        )
+        .ChartArea(chartArea => chartArea
+            .Background("transparent")
+        )
+        .SeriesDefaults(seriesDefaults =>
+            seriesDefaults.Pie()
+        )
+        .Tooltip(t => t.Template("\\#= category \\#").Visible(true))
+        .DataSource(ds =>
+        {
+            ds.Read(read => read.Action("GetSalesPerGroup", "Home").Data("forgeryToken"));
+        })
+        .Series(series =>
+        {
+            series.Pie(model => model.Amount, model => model.Group).CategoryField("Group").ExplodeField("Explode");
+        })
+        .ToClientTemplate()
+	)
+</script>
+
+
+@(Html.Kendo().TileLayout()
+	.Name("tilelayout")
+	.Columns(6)
+	.Resizable(true)
+	.Reorderable(true)
+	.RowsHeight("380px")
+	.ColumnsWidth("16%")
+	.Containers(c =>
+	{
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Sales Revenue</div>")).BodyTemplateId("sales-revenue-template").ColSpan(6).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Weekday Payment Preferences</div>")).BodyTemplateId("performance-template").ColSpan(4).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Monthly Sales<span style='float:right' class='k-icon k-i-more-vertical'></span></div>")).BodyTemplateId("monthly-sales-template").ColSpan(2).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Top 5 Countries <span class='k-state-disabled' style='float:right;'>Europe</span></div>")).BodyTemplateId("europe-template").ColSpan(3).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Top 5 Countries <span class='k-state-disabled' style='float:right;'>Global</span></div>")).BodyTemplateId("global-template").ColSpan(3).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Weekly Sales<span style='float:right' class='k-icon k-i-more-vertical'></span></div>")).BodyTemplateId("weekly-sales-template").ColSpan(2).RowSpan(1);
+		c.Add().Header(h => h.Template("<div class='k-card-title'>Cost Breakdown<span style='float:right' class='k-icon k-i-more-vertical'></span></div>")).BodyTemplateId("cost-template").ColSpan(4).RowSpan(1);
+	})
+	.Events(e => e.Resize("onTileResize"))
+)
+
+<style>
+    .k-card-title {
+        font-size: 20px;
+        line-height: 24px;
+        font-weight: 400;
+    }
+
+    #tilelayout .k-card-header {
+        border-style: none;
+    }
+</style>
+
+<script>
+    function labelVisual(e) {
+        var rect = new kendo.geometry.Rect([0, 0], [400, 20]);
+        var layout = new kendo.drawing.Layout(rect, {
+            spacing: 15
+        });
+        var label = new kendo.drawing.Text(e.series.data[e.pointIndex].Group, [40, 0], {
+            fill: {
+                color: e.options.labels.color
+            },
+            font: "normal 14px 'Roboto', sans-serif"
+        });
+        var value = new kendo.drawing.Text(kendo.toString(e.series.data[e.pointIndex].Amount, "c"), [0, 0], {
+            fill: {
+                color: e.options.labels.color
+            },
+            font: "bold 14px 'Roboto', sans-serif"
+        });
+        var marker = new kendo.drawing.Path({
+            fill: {
+                color: e.options.markers.background
+            },
+            stroke: {
+                width: 3,
+                color: e.options.markers.background
+            }
+        }).moveTo(0, 0).moveTo(10, 10).lineTo(30, 10);
+        var spaceRect = new kendo.geometry.Rect([0, 0], [(200 - value.measure().width - label.measure().width), 20]);
+        var spacer = new kendo.drawing.Rect(spaceRect, {
+            opacity: 0
+        });
+        var labelGroup = new kendo.drawing.Group();
+        labelGroup.append(marker, label);
+        layout.append(labelGroup, spacer, value);
+        layout.reflow()
+        return layout;
+    }
+    function onTileResize(e) {
+        // for widgets that do not auto resize
+        // https://docs.telerik.com/kendo-ui/styles-and-layout/using-kendo-in-responsive-web-pages
+        kendo.resize(e.container, true);
+    }
+    function forgeryToken() {
+        return kendo.antiForgeryTokens();
+    }
+</script>

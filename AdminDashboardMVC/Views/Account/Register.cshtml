@@ -1,0 +1,92 @@
+﻿@using AdminDashboardMVC.Models
+@model RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Account/Shared/_SignInLayout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="form-container k-d-flex-col k-align-items-center k-justify-content-center">
+    <div class="logo-container k-d-flex-col k-align-items-center k-justify-content-center">
+        <img src="@Url.Content("~/Content/assets/signin/signin.svg")" />
+        <div class="signin k-justify-content-center">Sign Up</div>
+        <div class="register k-d-flex-row k-justify-content-evenly"><span>Already have an account?</span><a href="Login">Sign In</a></div>
+    </div>
+    @(Html.Kendo().Form<RegisterViewModel>()
+                .Name("Register")
+                .Validatable(v=> {
+                    v.ValidationSummary(false);
+                    v.ValidateOnBlur(true);
+                })
+                .Layout("grid")
+                .Grid(g => g.Cols(1).Gutter(5))
+                .HtmlAttributes(new { action = "Register", method = "POST", controller = "Account" })
+                .Items(items =>
+                {
+                    items.Add()
+                        .Field(f => f.FullName).Label("Full Name");
+                    items.Add()
+                        .Field(f => f.Email)
+                        .Label(l => l.Text("Email"));
+                    items.Add()
+                        .Field(f => f.Password)
+                        .Label(l => l.Text("Password"))
+                        .InputHtmlAttributes(new { @type = "password", autocomplete = "off" });
+                    items.Add()
+                       .Field(f => f.Company)
+                       .Label(l => l.Text("Company"));
+                    items.Add()
+                        .Field(f => f.AgreeToTerms)
+                        .Label(l=>l.Text("<span>I agree to the <a href=\"#\">Terms of Services</a> and <a href=\"#\">Privacy Policy<a/></span>").Encoded(false));
+
+                    items.AddAntiForgeryToken();
+                })
+                .ButtonsTemplate("<button class='k-button k-primary' style='width:100%'>Create free account</button>")
+            )
+</div>
+<style>
+    .logo-container {
+        gap: 32px;
+    }
+
+    .form-container {
+        width: 270px;
+    }
+
+        .form-container > div > span {
+            display: inherit;
+            position: static;
+            width: 75px;
+            left: calc(50% - 75px/2 + 97.5px);
+            border: 1px solid #8F8F8F;
+        }
+
+    .signin {
+        display: flex;
+        font-weight: 300;
+        font-size: 56px;
+        line-height: 67px;
+        color: #2727BE;
+    }
+
+    .register {
+        display: flex;
+        align-items: center;
+        color: #424242;
+        gap: 18px;
+    }
+
+    #Register > div.k-form-layout.k-d-grid.k-grid-cols-1 > div:nth-child(5) {
+        display: flex;
+    }
+
+    #AgreeToTerms-form-label {
+        order: 1;
+        padding-left: 0.5em;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

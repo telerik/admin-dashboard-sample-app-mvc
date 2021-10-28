@@ -1,0 +1,231 @@
+﻿@model AdminDashboardMVC.Models.Sales.PerformanceViewModel
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "/Views/Shared/_AppLayout.cshtml";
+}
+
+<script id="revenue-rating-template" type="text/html">
+    @(Html.Kendo().Chart<AdminDashboardMVC.Models.Sales.Sale>()
+		.Name("revenue-rating-chart")
+		.HtmlAttributes(new { style = "height: 350px;" })
+		.Title(t => t.Text("Revenue per Product Type")
+			.Position(ChartTitlePosition.Top)
+			.Align(ChartTextAlignment.Left)
+			.Font("font-family: Roboto; font-style: normal; font-weight: normal; font-size: 20px;"))
+		.Legend(legend => legend
+			.Visible(true)
+			.Position(ChartLegendPosition.Bottom)
+			.Margin(0, 200, 0, 0)
+		)
+		.ChartArea(chartArea => chartArea
+			.Background("transparent")
+		)
+		.DataSource(ds =>
+		{
+			ds.Read(read => read.Action("PerformanceData", "Home").Data("forgeryToken"))
+			.Group(group => group.Add(model => model.Region));
+		})
+		.YAxis(axis => axis
+			.Numeric()
+			.Labels(labels => labels
+				.Format("{0:n}")
+			)
+		)
+		.XAxis(axis => axis
+			.Numeric()
+			.Labels(labels => labels
+				.Format("{0:c}")
+			)
+		)
+		.Series(series =>
+		{
+			series.Bubble(
+				model => model.Amount,
+				model => model.SalesCount,
+				model => model.Rate,
+				model => model.Product
+			);
+		})
+		.Tooltip(t => t.Visible(true).Template("\\#=dataItem.Region\\# : \\#=dataItem.Product\\# Sales : \\#=kendo.toString(dataItem.Amount,'c')\\#"))
+		.ToClientTemplate()
+	)
+
+</script>
+
+<script type="text/html" id="cardTemplate">
+    <div class="k-card" style="width:260px; height:340px;">
+        <img class="k-card-image" src="@Url.Content("~/Content/assets/products/")#= (ProductID % 9) + 1 #.png" />
+        <div class="k-card-body">
+            <div class="k-card-title">#= Title #</div>
+            <div class="k-card-subtitle">#= Description #</div>
+        </div>
+        <div class="k-card-footer">
+            <div class="k-d-flex-col k-align-items-center">
+                <span>
+                    <span class="k-button k-flat" onclick="review()"><span class="k-icon k-i-preview"></span>Review</span>
+                </span>
+                <span>
+                    <span class="k-button k-edit-button k-flat k-primary"><span class="k-icon k-i-edit"></span>Edit</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="previewTemplate">
+    <div class="k-card" style="width:260px; height:340px;">
+        <img class="k-card-image" src="@Url.Content("~/Content/assets/products/")#= (ProductID % 9) + 1 #.png" />
+        <div class="k-card-body">
+            <div class="k-card-title">#= Title #</div>
+            <div class="k-card-subtitle">#= Description #</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="editTemplate">
+    <div class="k-card" style="width:260px; height:340px;">
+        <img class="k-card-image" src="@Url.Content("~/Content/assets/products/")#= (ProductID % 9) + 1 #.png" />
+        <div class="k-card-body">
+            <div class="k-card-title"><input data-role="textbox" data-bind="value: Title" name="Title" style="width: 100%;" /></div>
+            <div class="k-card-subtitle"><textarea data-role="textarea" data-rows="3" data-bind="value: Description" name="Description" style="width: 100%;" /></div>
+        </div>
+        <div class="k-card-footer">
+            <div class="k-d-flex-col k-align-items-center">
+                <span class="k-button k-flat k-cancel-button"><span class="k-icon k-i-cancel"></span>Cancel</span>
+                <span class="k-button k-flat k-primary k-update-button"><span class="k-icon k-i-check"></span>Save</span>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="products-template" type="text/html" style="background-color: #FAFAFA">
+    <div class="k-d-flex-row k-justify-content-center k-align-content-center" style="margin-bottom:45px;">
+        <input id="search" class="k-textbox" name="search" placeholder="Product Search" style="width:40%;" />
+    </div>
+    <div>
+        <div id="listView"></div>
+        <div id="pager"></div>
+    </div>
+</script>
+
+@(Html.Kendo().TileLayout()
+	.Name("tilelayout")
+	.Columns(1)
+	.Resizable(true)
+	.Reorderable(true)
+	.RowsHeight("420px")
+	.ColumnsWidth("100%")
+	.Containers(c =>
+	{
+		c.Add().BodyTemplateId("revenue-rating-template").ColSpan(1).RowSpan(1);
+		c.Add().BodyTemplateId("products-template").ColSpan(1).RowSpan(3);
+	})
+	.Events(e => e.Resize("onTileResize"))
+)
+
+<div id="review"></div>
+
+<style>
+    #listView > .k-listview-content {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 32px;
+        max-height: 1100px;
+    }
+
+    .k-card-image {
+        width: 100%;
+    }
+
+    .k-card-title {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 18px;
+        line-height: 20px;
+    }
+
+    .k-card-subtitle {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 17px;
+    }
+
+    .k-tilelayout-item.k-card:nth-child(2) {
+        border: none;
+        background: inherit;
+    }
+
+    .k-listview {
+        background: inherit;
+        border: none;
+    }
+</style>
+<script>
+    function review() {
+        var listView = $("#listView").getKendoListView();
+        var dataItem = listView.dataItem($(event.target).closest('.k-card'))
+        var reviewWindow = $("#review").getKendoWindow();
+        if (!reviewWindow) {
+            reviewWindow = $("#review").kendoWindow({
+                actions: [
+                    "Close"
+                ],
+                visible:false,
+                title: dataItem.Title,
+            }).getKendoWindow();
+        }
+        var windowContent = kendo.template($("#previewTemplate").html());
+        reviewWindow.center().open().content(windowContent(dataItem));
+    }
+    function onSearchInput(e) {
+        console.log(e)
+    }
+    function forgeryToken() {
+        return kendo.antiForgeryTokens();
+    }
+    function onTileResize(e) {
+        // for widgets that do not auto resize
+        // https://docs.telerik.com/kendo-ui/styles-and-layout/using-kendo-in-responsive-web-pages
+        kendo.resize(e.container, true);
+    }
+    function resizeWidgets() {
+        $("#revenue-rating-chart").getKendoChart().resize()
+    }
+    $(document).ready(function () {
+        $("#search").on("change keyup", function () {
+            var input = $(this).val();
+            var listView = $("#listView").getKendoListView();
+            listView.dataSource.filter({
+                field: "Title",
+                operator: "contains",
+                value: input
+            });
+        })
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: "@Url.Action("GetProducts", "Home")",
+                    type: "POST",
+                    data:forgeryToken,
+                    dataType: "json"
+                }
+            },
+            pageSize: 8
+        });
+        $("#pager").kendoPager({
+            dataSource: dataSource,
+            buttonCount:5,
+            input: true,
+            refresh:true,
+        });
+        $("#listView").kendoListView({
+            dataSource: dataSource,
+            template: kendo.template($("#cardTemplate").html()),
+            editTemplate: kendo.template($("#editTemplate").html())
+        });
+    })
+</script>

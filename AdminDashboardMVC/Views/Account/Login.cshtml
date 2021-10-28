@@ -1,0 +1,116 @@
+﻿@using AdminDashboardMVC.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Account/Shared/_SignInLayout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="form-container k-d-flex-col k-align-items-center k-justify-content-center">
+    <div class="logo-container k-d-flex-col k-align-items-center k-justify-content-center">
+        <img src="@Url.Content("~/Content/assets/signin/signin.svg")" />
+        <div class="signin k-justify-content-center">Sign In</div>
+        <div class="register k-d-flex-row k-justify-content-evenly"><span>Don't have an account?</span> <a href="Register">Sign Up</a></div>
+    </div>
+    @(Html.Kendo().Form<LoginViewModel>()
+                .Name("Login")
+                 .Validatable(v =>
+                 {
+                     v.ValidationSummary(false);
+                     v.ValidateOnBlur(true);
+                 })
+                .Layout("grid")
+                .Grid(g => g.Cols(1).Gutter(5))
+                .HtmlAttributes(new { action = "Login", method = "POST", controller = "Account"})
+                .Items(items =>
+                {
+                    items.Add()
+                        .Field(f => f.Email)
+                        .Label(l => l.Text("Email:"));
+                    items.Add()
+                        .Field(f => f.Password)
+                        .Label(l => l.Text("Password:"))
+                        .InputHtmlAttributes(new { @type = "password", autocomplete = "off" });
+
+                    items.Add()
+                        .Field(f => f.RememberMe)
+                        .Label("Remember me");
+
+                    items.AddAntiForgeryToken();
+                })
+                .ButtonsTemplate("<button class='k-button k-primary' style='width:100%'>Sign In</button>"))
+            
+    <div style="padding:10px;" class="k-d-flex-row k-align-items-center k-justify-content-center">
+        <span style="flex: none; order: 0; flex-grow: 1; margin: 0px 9px;"></span>
+        <span style="border: none; width: 102px; font-size:14px">Or continue with</span>
+        <span style="flex: none; order: 2; flex-grow: 1; margin: 0px 9px;"></span>
+    </div>
+    <div class="button-container k-d-flex-row k-justify-content-evenly">
+        @(Html.Kendo().Button()
+			.Name("facebook")
+			.HtmlAttributes(new { type = "button", @class = "k-flat k-secondary k-state-hover" })
+			.Icon("facebook")
+		)
+        @(Html.Kendo().Button()
+			.Name("twitter")
+			.HtmlAttributes(new { type = "button", @class = "k-flat k-secondary k-state-hover" })
+			.Icon("twitter")
+		)
+        @(Html.Kendo().Button()
+			.Name("reddit")
+			.HtmlAttributes(new { type = "button", @class = "k-flat k-secondary k-state-hover" })
+			.Icon("reddit")
+		)
+    </div>
+</div>
+<style>
+
+    .form-container {
+        width: 270px;
+    }
+
+        .form-container > div > span {
+            display: inherit;
+            position: static;
+            width: 75px;
+            left: calc(50% - 75px/2 + 97.5px);
+            border: 1px solid #8F8F8F;
+        }
+
+    .logo-container {
+        gap: 32px;
+    }
+
+    .signin {
+        display: flex;
+        font-weight: 300;
+        font-size: 56px;
+        line-height: 67px;
+        color: #2727BE;
+    }
+
+    .register {
+        display: flex;
+        align-items: center;
+        color: #424242;
+        gap: 18px;
+    }
+
+    .button-container {
+        width: 100%;
+    }
+
+    #Login > div.k-form-layout.k-d-grid.k-grid-cols-1 > div:nth-child(3) {
+        display: flex;
+    }
+
+    #RememberMe-form-label {
+        order: 1;
+        padding-left: 0.5em;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -3,14 +3,14 @@
 
 @{
     ViewData["Title"] = "Overview";
-    Layout = "/Views/Shared/_AppLayout.cshtml";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
 
     var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
 }
 
 <div class="k-d-flex-col k-justify-content-center">
     <div class="greeting">
-        @*Hello Again, @userName*@
+        Hello Again, Jaxons Daniels!
     </div>
 
     <script id="tasks-ontrack-template" type="text/html">
@@ -111,49 +111,49 @@
 
     <script id="mk-team-template" type="text/html">
         @(Html.Kendo().Grid<AdminDashboardMVC.Models.Employees.EmployeeViewModel>()
-			.Name("grid")
-			.Columns(columns =>
-			{
-				columns.Group(group => group
-					.Title("Employee")
-					.Columns(employee =>
-					{
-						employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-circle k-avatar-image k-avatar-sm'><img src='" + @Url.Content("../Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
-						employee.Bound(x => x.JobTitle);
-					})
-				);
-				columns.Group(group => group
-					.Title("Performance")
-					.Columns(employee =>
-					{
-						employee.Bound(x => x.Rating).HtmlAttributes(new Dictionary<string, object> { ["style"] = "text-align:center" }).ClientTemplate("<input id='rating_\\#=Id\\#' class='ratingInGrid' />");
-						employee.Bound(x => x.Budget).Format("{0:c}").ClientTemplate("\\#= getBudgetTemplate(data)\\#");
-					})
-				);
-			})
-			.ToolBar(t =>
-			{
-				t.Search();
-				t.Excel();
-				t.Pdf();
-			})
-			.Search(s =>
-			{
-				s.Field(c => c.FullName);
-				s.Field(c => c.JobTitle);
-			})
-			.Groupable()
-			.Pageable(p => p.ButtonCount(5).Input(true))
-			.Sortable()
-			.Scrollable()
-			.HtmlAttributes(new { style = "height:650px;" })
-			.DataSource(dataSource => dataSource
-				.Ajax()
-				.PageSize(7)
-				.Read(read => read.Action("Read", "Home").Data("onAdditionalData"))
-			)
-			.Events(ev => ev.DataBound("onDataBound"))
-			.ToClientTemplate()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Group(group => group
+                    .Title("Employee")
+                    .Columns(employee =>
+                    {
+                        employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-circle k-avatar-image k-avatar-sm'><img src='" + @Url.Content("Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
+                        employee.Bound(x => x.JobTitle);
+                    })
+                );
+                columns.Group(group => group
+                    .Title("Performance")
+                    .Columns(employee =>
+                    {
+                        employee.Bound(x => x.Rating).HtmlAttributes(new Dictionary<string, object> { ["style"] = "text-align:center" }).ClientTemplate("<input id='rating_\\#=Id\\#' class='ratingInGrid' />");
+                        employee.Bound(x => x.Budget).Format("{0:c}").ClientTemplate("\\#= getBudgetTemplate(data)\\#");
+                    })
+                );
+            })
+            .ToolBar(t =>
+            {
+                t.Search();
+                t.Excel();
+                t.Pdf();
+            })
+            .Search(s =>
+            {
+                s.Field(c => c.FullName);
+                s.Field(c => c.JobTitle);
+            })
+            .Groupable()
+            .Pageable(p => p.ButtonCount(5).Input(true))
+            .Sortable()
+            .Scrollable()
+            .HtmlAttributes(new { style = "height:650px;" })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(7)
+                .Read(read => read.Action("Read", "Home").Data("onAdditionalData"))
+            )
+            .Events(ev => ev.DataBound("onDataBound"))
+            .ToClientTemplate()
 		)
 
     </script>

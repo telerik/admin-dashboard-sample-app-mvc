@@ -3,9 +3,11 @@ using AdminDashboardMVC.Models.Employees;
 using AdminDashboardMVC.Models.Sales;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1604,135 +1606,10 @@ namespace AdminDashboard.Data
                 return;
             }
 
-            List<Sale> import = new List<Sale>();
 
-            import.Add(new Sale
-            {
-                Id = 1,
-                Code = "HN",
-                Amount = 1,
-                Country = "Honduras",
-                CustomerInfo = 6982147,
-                PromotionId = 445,
-                PaymentType = "Cash",
-                ProductGroup = "Consumer Food",
-                Region = "NA",
-                StoreId = "HN-5",
-                TransactionId = 7594225,
-                TransactionDate = new DateTime(2021, 8, 19)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 2,
-                Code = "VC",
-                Amount = 3.5,
-                Country = "Saint Vincent and the Grenadines",
-                CustomerInfo = 8289398,
-                PromotionId = 554,
-                PaymentType = "Debit Card",
-                ProductGroup = "Consumer Drink",
-                Region = "NA",
-                StoreId = "VC-2",
-                TransactionId = 57669944,
-                TransactionDate = new DateTime(2021, 9, 19)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 3,
-                Code = "AU",
-                Amount = 2,
-                Country = "Australia",
-                CustomerInfo = 83330623,
-                PromotionId = 11,
-                PaymentType = "Credit Card",
-                ProductGroup = "Consumer Drink",
-                Region = "APAC",
-                StoreId = "AU-4",
-                TransactionId = 24332611,
-                TransactionDate = new DateTime(2021, 10, 19)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 4,
-                Code = "PT",
-                Amount = 3,
-                Country = "Portugal",
-                CustomerInfo = 89856970,
-                PromotionId = 5,
-                PaymentType = "Credit Card",
-                ProductGroup = "Consumer Drink",
-                Region = "EMEA",
-                StoreId = "PT-5",
-                TransactionId = 92389349,
-                TransactionDate = new DateTime(2021, 9, 19)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 5,
-                Code = "BG",
-                Amount = 7,
-                Country = "Bulgaria",
-                CustomerInfo = 43244881,
-                PromotionId = 748,
-                PaymentType = "Credit Card",
-                ProductGroup = "Consumer Drink",
-                Region = "EMEA",
-                StoreId = "BG-5",
-                TransactionId = 68782858,
-                TransactionDate = new DateTime(2021, 8, 13)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 6,
-                Code = "PT",
-                Amount = 13,
-                Country = "Portugal",
-                CustomerInfo = 2111775,
-                PromotionId = 403,
-                PaymentType = "Debit Card",
-                ProductGroup = "Whole Product",
-                Region = "EMEA",
-                StoreId = "PT-1",
-                TransactionId = 52659358,
-                TransactionDate = new DateTime(2021, 8, 13)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 7,
-                Code = "BG",
-                Amount = 2,
-                Country = "Bulgaria",
-                CustomerInfo = 40716112,
-                PromotionId = 777,
-                PaymentType = "Credit Card",
-                ProductGroup = "Consumer Drink",
-                Region = "EMEA",
-                StoreId = "BG-1",
-                TransactionId = 86574578,
-                TransactionDate = new DateTime(2021, 8, 14)
-            });
-
-            import.Add(new Sale
-            {
-                Id = 8,
-                Code = "PT",
-                Amount = 1,
-                Country = "Portugal",
-                CustomerInfo = 27990816,
-                PromotionId = 210,
-                PaymentType = "Debit Card",
-                ProductGroup = "Consumer Food",
-                Region = "EMEA",
-                StoreId = "PT-4",
-                TransactionId = 78744776,
-                TransactionDate = new DateTime(2021, 8, 10)
-            });
+            var path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Content/imports/sales_data.json");
+            string json = File.ReadAllText(path);
+            List<Sale> import = JsonConvert.DeserializeObject<List<Sale>>(json);
 
             context.Sales.AddRange(import);
             context.SaveChanges();

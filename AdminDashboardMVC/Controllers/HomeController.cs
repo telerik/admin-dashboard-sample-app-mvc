@@ -33,20 +33,20 @@ namespace AdminDashboardMVC.Controllers
             PerformanceViewModel model = new PerformanceViewModel()
             {
                 Target = sales
-                    .Where(sale => sale.TransactionDate > new DateTime(2021, 6, 1))
-                    .Where(sale => sale.TransactionDate < new DateTime(2021, 11, 1))
+                    .Where(sale => sale.TransactionDate > new DateTime(2019, 1, 1))
+                    .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                     .Count(),
                 TotalSalesPerWeekCount = sales
-                    .Where(sale => sale.TransactionDate > new DateTime(2021, 6, 23))
-                    .Where(sale => sale.TransactionDate < new DateTime(2021, 11, 1))
+                    .Where(sale => sale.TransactionDate > new DateTime(2019, 12, 23))
+                    .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                     .Count(),
                 LastMonthSalesCount = sales
-                    .Where(sale => sale.TransactionDate > new DateTime(2021, 6, 30))
-                    .Where(sale => sale.TransactionDate < new DateTime(2021, 10, 1))
+                    .Where(sale => sale.TransactionDate > new DateTime(2019, 11, 30))
+                    .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                     .Count(),
                 LastThreeMonthsSalesCount = sales
-                    .Where(sale => sale.TransactionDate > new DateTime(2021, 6, 30))
-                    .Where(sale => sale.TransactionDate < new DateTime(2021, 11, 1))
+                    .Where(sale => sale.TransactionDate > new DateTime(2019, 9, 30))
+                    .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                     .Count()
             };
 
@@ -63,8 +63,8 @@ namespace AdminDashboardMVC.Controllers
             }
 
             var salesByRegion = sales
-                                 .Where(sale => sale.TransactionDate > new DateTime(2021, 6, 1))
-                                 .Where(sale => sale.TransactionDate < new DateTime(2021, 11, 1))
+                                .Where(sale => sale.TransactionDate > new DateTime(2019, 1, 1))
+                                .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                                 .GroupBy(sale => new { sale.Region, sale.TransactionDate.Year, sale.TransactionDate.Month })
                                 .Select(group => new SalesByDateViewModel
                                 {
@@ -107,9 +107,9 @@ namespace AdminDashboardMVC.Controllers
             {
                 userDetails = new UserDetailsModel()
                 {
-                    Username = claimsIdentity.Claims.First().Value,
-                    Email = claimsIdentity.Claims.First().Value,
-                    Nickname = claimsIdentity.Claims.Last().Value,
+                    Username = "jaxons.danniels@company.com",
+                    Email = "jaxons.danniels@company.com",
+                    Nickname = "Jax",
                     Phone = "112345678901",
                     Website = "https://www.telerik.com/",
                     WorkPhone = "112345678901",
@@ -126,8 +126,8 @@ namespace AdminDashboardMVC.Controllers
             using (var db = new ApplicationDbContext())
             {
                 salesByRegion = db.Sales
-                                 .Where(sale => sale.TransactionDate > new DateTime(2021, 8, 1))
-                                 .Where(sale => sale.TransactionDate < new DateTime(2021, 10, 1))
+                                 .Where(sale => sale.TransactionDate > new DateTime(2019, 1, 1))
+                                 .Where(sale => sale.TransactionDate < new DateTime(2020, 1, 1))
                                  .GroupBy(sale => new { sale.Region, sale.TransactionDate.Year, sale.TransactionDate.Month }).ToList()
                                  .Select(group => new SalesByDateViewModel
                                  {
@@ -175,7 +175,8 @@ namespace AdminDashboardMVC.Controllers
             }
 
             var salesByPaymentType = sales
-                                .Where(sale => sale.TransactionDate > new DateTime(2021, 1, 7))
+                                .Where(sale => sale.TransactionDate > new DateTime(2019, 1, 7))
+                                .Where(sale => sale.TransactionDate < new DateTime(2019, 1, 14))
                                 .ToList()
                                 .GroupBy(sale => new { sale.PaymentType, sale.TransactionDate.Date, sale.TransactionDate.DayOfWeek })
                                 .Select(group => new

@@ -25,6 +25,10 @@ for file in `find . -type f -name "*.csproj"`
 do
     sed -i "s/$CURRENT_GLOBAL_VERSION/$LATEST_RELEASE/g" $file
 done
+for file in `find . -type f -name "*.config"`  
+do
+    sed -i "s/$CURRENT_GLOBAL_VERSION/$LATEST_RELEASE/g" $file
+done
 
 echo "Stage2 Commit the change"
 reviewers="Dimitar-Goshev,MilenaCh,mparvanov"

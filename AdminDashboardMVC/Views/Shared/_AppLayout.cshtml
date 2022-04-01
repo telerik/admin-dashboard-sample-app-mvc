@@ -118,16 +118,21 @@
             resizeWidgets()
         })
     })
-	function toggleDrawer(e) {
-        var drawerInstance = $("#drawer").getKendoDrawer();
-        var drawerContainer = drawerInstance.drawerContainer;
-        if (drawerContainer.hasClass("k-drawer-expanded")) {
+
+    var isDrawerVisible = true;
+    function toggleDrawer(e) {
+        var drawerInstance = $("#drawer").data("kendoDrawer");
+        
+        if (isDrawerVisible) {
             drawerInstance.hide();
-            $('.k-drawer-container').removeClass('k-drawer-expanded');
-        } else {
-            drawerInstance.show();
+            isDrawerVisible = false;
         }
-        //resize widgets after Drawer animmation has completed
+        else {
+            drawerInstance.show();
+            isDrawerVisible = true;
+        }
+
+        ////resize widgets after Drawer animmation has completed
         setTimeout(resizeWidgets,400)
     }
     function onItemClick(e) {

@@ -8,11 +8,11 @@
     <div class="k-d-flex-col">
         <div class="k-align-items-start">
             @(Html.Kendo().Button()
-				.Name("account-button")
-				.HtmlAttributes(new { type = "button", @class = "k-primary k-flat k-state-selected" })
-				.Icon("user")
-				.Content("Account")
-				.ToClientTemplate()
+                .Name("account-button")
+                .HtmlAttributes(new { type = "button", @class = "k-button k-button-md k-button-rectangle k-rounded-md k-button-solid k-button-solid-primary" })
+                .Icon("user")
+                .Content("Account")
+                .ToClientTemplate()
 			)
             @(Html.Kendo().Button()
 				.Name("security-button")
@@ -101,7 +101,10 @@
 		)
 		<span>Public Profile</span>
 	</div>
-	<button class="k-button k-primary k-form-submit k-state-disabled" type="submit">Save Changes</button>
+	<div style="float: right;>
+		<button id="cancelButton" name="cancelButton" type="button" data-role="button" class="k-button k-button-md k-button-rectangle k-rounded-md k-button-flat k-button-flat-base k-disabled" role="button" aria-disabled="true" disabled="disabled"><span class="k-button-text">Cancel</span></button>
+		<button type="button" id="save" name="save" data-role="button" class="k-button k-button-md k-button-rectangle k-rounded-md k-button-solid k-button-solid-primary k-disabled" role="button" aria-disabled="true" disabled="disabled"><span class="k-button-text">Save Changes</span></button>
+	</div>
 </script>
 
 <script id="date-template" type="text/html">

@@ -41,11 +41,18 @@
     </script>
 
     <script id="total-points-header-template" type="text/html">
-        <span class="k-card-title">Sales</span>
-        <span class="k-scheduler-navigation k-button-group"><button class="k-button k-nav-today" title="Today"><span class="k-button-text">Today</span></button><button class="k-button k-button-icon k-icon-button k-nav-prev" title="Previous" aria-label="Previous"><span class="k-icon k-i-arrow-60-left"></span></button><button class="k-button k-button-icon k-icon-button k-nav-next" title="Next" aria-label="Next"><span class="k-icon k-i-arrow-60-right"></span></button></span>
-        <span><span class="k-icon k-i-calendar"></span><span>@DateTime.Now.ToLongDateString()</span></span>
-        <span class="k-spacer k-toolbar-spacer"></span>
-        @(Html.Kendo().ButtonGroup()
+        <div class="sales">
+            <span class="k-card-title">Sales</span>
+          @(Html.Kendo().DateRangePicker()
+          .Name("daterangepicker")
+          .Labels(false)
+          .Range(r => r.Start(new DateTime(2019, 1, 1)).End(new DateTime(2019, 12, 12)))
+          .Events(e => e.Close("onRangeSelect").Change("onRangeChange"))
+          .HtmlAttributes(new { style="width: 30%;"})
+          .ToClientTemplate()
+        )
+            <span class="k-spacer k-toolbar-spacer"></span>
+            @(Html.Kendo().ButtonGroup()
 			.Name("total-points-header-options")
 			.Items(t =>
 			{
@@ -56,6 +63,7 @@
 			.Events(ev => ev.Select("onChartChange"))
 			.ToClientTemplate()
 		)
+        </div>
     </script>
 
     <script id="total-points-template" type="text/html">
@@ -113,11 +121,12 @@
             .Name("grid")
             .Columns(columns =>
             {
+                columns.Select().Width(50);
                 columns.Group(group => group
                     .Title("Employee")
                     .Columns(employee =>
                     {
-                        employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-circle k-avatar-image k-avatar-sm'><img src='" + @Url.Content("Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
+                        employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-solid-primary k-rounded-full k-avatar-sm'><img src='" + @Url.Content("../Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
                         employee.Bound(x => x.JobTitle);
                     })
                 );
@@ -179,6 +188,7 @@
 </div>
 
 <script>
+
     function getTemplate(value) {
         var selectedOption = $('#total-points-header-options').getKendoButtonGroup().current().index();
         if (selectedOption != 1) {
@@ -190,6 +200,24 @@
         e.sender.element.children().removeClass('k-primary');
         $(e.sender.element.children()[e.indices]).addClass('k-primary');
         $("#chart").getKendoChart().dataSource.read();
+    }
+    function onRangeSelect(e) {
+        var range = this.range();
+        filterChart(range);
+    }
+    function onRangeChange(e) {
+        var range = this.range();
+        filterChart(range);
+    }
+    function filterChart(range) {
+        var chart = $("#chart").data("kendoChart");
+        chart.dataSource.filter({
+            logic: "and",
+            filters: [
+                { field: "Date", operator: "gte", value: range.start },
+                { field: "Date", operator: "lte", value: range.end }
+            ]
+        });
     }
     function buttonGroupSelectHandler(e) {
         e.sender.element.children().removeClass('k-primary');
@@ -273,5 +301,11 @@
         font-size: 28px;
         line-height: 37px;
         padding: 16px;
+    }
+
+    .sales {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
 </style>

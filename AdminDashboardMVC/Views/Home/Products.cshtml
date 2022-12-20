@@ -66,7 +66,7 @@
                     <span class="k-button-md k-flat" onclick="review()"><span class="k-icon k-i-preview"></span>Review</span>
                 </span>
                 <span>
-                    <span class="k-button k-button-md k-button-rectangle k-rounded-md k-button-flat k-button-flat-primary k-edit-button"><span class="k-icon k-i-edit"></span>Edit</span>
+                    <a class="k-button k-button-md k-button-rectangle k-rounded-md k-button-flat k-button-flat-primary k-edit-button"><span class="k-icon k-i-edit"></span>Edit</a>
                 </span>
             </div>
         </div>
@@ -212,8 +212,22 @@
                     type: "POST",
                     data:forgeryToken,
                     dataType: "json"
+                },
+                update: {url: "@Url.Action("UpdateProduct", "Home")"}
+            },
+            schema: {
+                model: {
+                    id: "ProductID",
+                    fields: {
+                        ProductID: { editable: false, nullable: true },
+                        ProductName: "ProductName",
+                        UnitPrice: { type: "number" },
+                        Discontinued: { type: "boolean" },
+                        UnitsInStock: { type: "number" }
+                    }
                 }
             },
+            batch: true,
             pageSize: 8
         });
         $("#pager").kendoPager({

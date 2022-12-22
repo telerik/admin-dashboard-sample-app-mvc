@@ -10,6 +10,8 @@ using Kendo.Mvc.UI;
 using AdminDashboardMVC.Models.Employees;
 using System.Security.Claims;
 using AdminDashboardMVC.Models.UserSettings;
+using Microsoft.AspNet.Identity;
+
 
 namespace AdminDashboardMVC.Controllers
 {
@@ -18,6 +20,16 @@ namespace AdminDashboardMVC.Controllers
     {
         public ActionResult Index()
         {
+            var userEmail = User.Identity.Name;
+            var userName = "";
+
+            using (var db = new ApplicationDbContext())
+            {
+                userName = db.Users.FirstOrDefault(u => u.UserName == userEmail).FullName;
+            }
+
+            ViewData["userName"] = userName;
+
             return View();
         }
 
@@ -303,6 +315,11 @@ namespace AdminDashboardMVC.Controllers
             });
 
             return Json(products.ToList());
+        }
+
+        public void UpdateProduct()
+        {
+
         }
     }
 }

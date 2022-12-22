@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using AdminDashboardMVC.App_Start;
+using System.Web;
 using System.Web.Mvc;
 
 namespace AdminDashboardMVC
@@ -8,6 +9,7 @@ namespace AdminDashboardMVC
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new HandleAntiforgeryTokenErrorAttribute() { ExceptionType = typeof(HttpAntiForgeryException) } );
         }
     }
 }

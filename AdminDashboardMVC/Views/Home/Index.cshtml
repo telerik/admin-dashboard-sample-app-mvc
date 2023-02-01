@@ -309,4 +309,16 @@
         align-items: center;
         gap: 15px;
     }
+
+    @@media (max-width: 716px) {
+        #dashboard-tilelayout div.k-tilelayout-item:nth-child(-n + 4) {
+            grid-column-end: span 4 !important;
+        }
+    }
+
+    @@media (min-width: 717px) and (max-width: 1065px) {
+        #dashboard-tilelayout div.k-tilelayout-item:nth-child(-n + 4) {
+            grid-column-end: span 2 !important;
+        }
+    }
 </style>

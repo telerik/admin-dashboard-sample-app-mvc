@@ -4,13 +4,11 @@ using System;
 using Kendo.Mvc.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Kendo.Mvc.UI;
 using AdminDashboardMVC.Models.Employees;
 using System.Security.Claims;
 using AdminDashboardMVC.Models.UserSettings;
-using Microsoft.AspNet.Identity;
 
 
 namespace AdminDashboardMVC.Controllers

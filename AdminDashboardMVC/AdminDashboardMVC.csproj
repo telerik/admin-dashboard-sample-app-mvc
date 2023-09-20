@@ -51,8 +51,8 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Kendo.Mvc, Version=2023.1.425.545, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
-      <HintPath>packages\Telerik.UI.for.AspNet.Mvc5.Trial.2023.1.425\lib\net45\Kendo.Mvc.dll</HintPath>
+    <Reference Include="Kendo.Mvc, Version=2023.2.829.545, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <HintPath>packages\Telerik.UI.for.AspNet.Mvc5.Trial.2023.2.829\lib\net45\Kendo.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.FontIcons, Version=1.0.0.0, Culture=neutral, PublicKeyToken=20b4b0547069c4f8, processorArchitecture=MSIL">
       <HintPath>packages\Telerik.FontIcons.1.5.0\lib\netstandard1.1\Telerik.FontIcons.dll</HintPath>

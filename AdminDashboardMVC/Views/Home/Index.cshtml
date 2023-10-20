@@ -127,7 +127,7 @@
                     .Title("Employee")
                     .Columns(employee =>
                     {
-                        employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-solid-primary k-rounded-full k-avatar-sm'><img src='" + @Url.Content("/Content/assets/employees/\\#= getId(Id)\\#.jpg") + "'/></span> \\#=FullName\\#");
+                        employee.Bound(x => x.FullName).Title("Contact Name").ClientTemplate("<span class='k-avatar k-avatar-solid-primary k-rounded-full k-avatar-sm'><img src='" + @Url.Content("~/Content/assets/employees/") + "\\#= getId(Id)\\#.jpg" + "'/></span> \\#=FullName\\#");
                         employee.Bound(x => x.JobTitle);
                     })
                 );

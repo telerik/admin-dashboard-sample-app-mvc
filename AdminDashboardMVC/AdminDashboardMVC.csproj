@@ -73,7 +73,7 @@
       <HintPath>packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.FontIcons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=20b4b0547069c4f8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Telerik.FontIcons.2.1.0\lib\netstandard1.1\Telerik.FontIcons.dll</HintPath>
+      <HintPath>packages\Telerik.FontIcons.2.1.0\lib\netstandard1.1\Telerik.FontIcons.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.SvgIcons, Version=2.1.0.0, Culture=neutral, PublicKeyToken=20b4b0547069c4f8, processorArchitecture=MSIL">
       <HintPath>packages\Telerik.SvgIcons.2.1.0\lib\netstandard1.1\Telerik.SvgIcons.dll</HintPath>

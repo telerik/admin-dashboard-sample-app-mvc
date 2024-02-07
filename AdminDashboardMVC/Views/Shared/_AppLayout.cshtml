@@ -31,13 +31,13 @@
 				   .HtmlAttributes(new { style = "height: 48px" })
 				   .Items(items =>
 				   {
-					   items.Add().Template("<span id='menuIcon' href='\\#'><span class='k-icon k-i-menu' onclick='toggleDrawer()'></span></span>").Type(AppBarItemType.ContentItem);
+					   items.Add().Template("<span id='menuIcon' href='\\#'><span class='k-icon k-font-icon k-i-menu' onclick='toggleDrawer()'></span></span>").Type(AppBarItemType.ContentItem);
 					   items.Add().Type(AppBarItemType.Spacer).Width("16px");
 					   items.Add().Template("<div class='title'>" + @ViewData["Title"] + "</div>").Type(AppBarItemType.ContentItem);
 					   items.Add().Type(AppBarItemType.Spacer);
-					   items.Add().Template("<div class='app-bar-link'><span class='k-icon k-i-notification'><span data-role='badge' class='k-badge k-badge-solid k-badge-error k-badge-md k-badge-dot k-badge-outside k-top-end'></span></span></div>").Type(AppBarItemType.ContentItem);
+					   items.Add().Template("<div class='app-bar-link'><span class='k-icon k-font-icon k-i-notification'><span data-role='badge' class='k-badge k-badge-solid k-badge-error k-badge-md k-badge-dot k-badge-outside k-top-end'></span></span></div>").Type(AppBarItemType.ContentItem);
 					   items.Add().Type(AppBarItemType.Spacer).Width("8px");
-					   items.Add().Template("<a href='" + @Url.Action("About", "Home") + "' class='k-link app-bar-link'>About</a>").Type(AppBarItemType.ContentItem);
+					   items.Add().Template("<a href='" + @Url.Action("About", "Home") + "' class='k-link app-bar-link app-bar-about'>About</a>").Type(AppBarItemType.ContentItem);
 					   //items.Add().Template("<a href='" + @Url.Action("Contact", "Home") + "' class='k-link app-bar-link'>Contact</a>").Type(AppBarItemType.ContentItem);
 				   })
 				)
@@ -59,11 +59,11 @@
         </form>
     </div>
     <ul>
-        <li><a class="k-link" href="@Url.Action("Index", "Home")" data-role='drawer-item'><span class="k-icon k-i-grid "></span>Dashboard</a></li>
-        <li><a class="k-link" href="@Url.Action("Performance", "Home")" data-role='drawer-item'><span class="k-icon k-i-globe"></span>Performance and Sales</a></li>
-        <li><a class="k-link" href="@Url.Action("Products", "Home")" data-role='drawer-item'><span class="k-icon k-i-aggregate-fields"></span>Products</a></li>
+        <li><a class="k-link" href="@Url.Action("Index", "Home")" data-role='drawer-item'><span class="k-icon k-font-icon k-i-grid "></span>Dashboard</a></li>
+        <li><a class="k-link" href="@Url.Action("Performance", "Home")" data-role='drawer-item'><span class="k-icon k-font-icon k-i-globe"></span>Performance and Sales</a></li>
+        <li><a class="k-link" href="@Url.Action("Products", "Home")" data-role='drawer-item'><span class="k-icon k-font-icon k-i-aggregate-fields"></span>Products</a></li>
         <li data-role='drawer-separator'></li>
-        <li><a class="k-link" href="@Url.Action("Settings", "Home")" data-role='drawer-item'><span class="k-icon k-i-gear"></span>Settings</a></li>
+        <li><a class="k-link" href="@Url.Action("Settings", "Home")" data-role='drawer-item'><span class="k-icon k-font-icon k-i-gear"></span>Settings</a></li>
     </ul>
 </script>
 
@@ -88,7 +88,7 @@
         color: #2D73F5;
     }
 
-    .app-bar-link {
+    .app-bar-about {
         font-size: 14px;
         line-height: 20px;
         color: #424242;
@@ -101,6 +101,10 @@
 
     li.k-state-selected[data-role='drawer-item'] > a {
         color: #FFFFFF;
+    }
+
+    .app-bar-link {
+        color: #2D73F5;
     }
 
     @@media (max-width: 716px) {

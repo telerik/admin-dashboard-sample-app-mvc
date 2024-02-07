@@ -28,7 +28,9 @@
                 <div class="slogan-container k-d-flex-col k-align-items-center k-justify-content-center">
                     <div class="title">How Does Telerik UI Cut Development Time?</div>
                     <div class="subtitle">Telerik UI delivers everything you need to build modern, beautiful, responsive apps.</div>
-                    <div class="kendoka"></div>
+                    <div class="kendoka">
+                        <img src="@Url.Content("~/Content/assets/signin/kendoka.svg")" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,8 +53,6 @@
         }
 
         .kendoka {
-            /*background: url("../../../../../assets/signin/kendoka.svg");*/
-            background: url( @Url.Content("~/Content/assets/signin/kendoka.svg") );
             width: 480px;
             height: 480px;
             transform: scale(-1,1);

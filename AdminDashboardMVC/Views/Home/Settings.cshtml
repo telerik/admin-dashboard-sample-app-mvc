@@ -31,7 +31,7 @@
             @(Html.Kendo().Button()
 				.Name("notification-button")
 				.HtmlAttributes(new { type = "button", @class = "k-secondary k-flat" })
-				.Icon("notification")
+				.Icon("bell")
 				.Content("Notifications")
 				.ToClientTemplate()
 			)
@@ -39,8 +39,8 @@
         </div>
 
         <div class="k-d-flex-row k-justify-content-around">
-            <span class="k-icon k-i-user" style="font-size:2em;"></span>
-            <span class="k-icon k-i-information" style="font-size:2em;"></span>
+            <span class="k-icon k-font-icon k-i-user" style="font-size:2em;"></span>
+            <span class="k-icon k-font-icon k-i-information" style="font-size:2em;"></span>
             @(Html.Kendo().Form<AdminDashboardMVC.Models.UserSettings.UserDetailsModel>()
 				.Name("UserInformationForm")
 				.Layout("grid")

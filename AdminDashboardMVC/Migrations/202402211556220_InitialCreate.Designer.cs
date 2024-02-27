@@ -7,13 +7,13 @@ namespace AdminDashboardMVC.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class extend_application_user : IMigrationMetadata
+    public sealed partial class InitialCreate : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(extend_application_user));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
         
         string IMigrationMetadata.Id
         {
-            get { return "202110201346018_extend_application_user"; }
+            get { return "202402211556220_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

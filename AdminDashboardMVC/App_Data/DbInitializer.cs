@@ -10,6 +10,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace AdminDashboard.Data
 {
@@ -1607,7 +1608,7 @@ namespace AdminDashboard.Data
             }
 
 
-            var path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Content/imports/sales_data.json");
+            var path = HttpContext.Current.Server.MapPath("~/Content/imports/sales_data.json");
             string json = File.ReadAllText(path);
             List<Sale> import = JsonConvert.DeserializeObject<List<Sale>>(json);
 

@@ -27,7 +27,7 @@ namespace AdminDashboardMVC.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("AdminDashboardConnection", throwIfV1Schema: false)
         {
             Database.SetInitializer<ApplicationDbContext>(new DbInitializer(this));
         }

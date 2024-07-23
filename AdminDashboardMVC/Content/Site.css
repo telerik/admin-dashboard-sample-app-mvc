@@ -9,3 +9,7 @@
 html {
     height: 100%;
 }
+
+.k-avatar{
+    border-width: 0;
+}

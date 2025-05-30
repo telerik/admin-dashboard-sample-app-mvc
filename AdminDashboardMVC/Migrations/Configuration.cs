@@ -18,15 +18,5 @@
 
             SetSqlGenerator("System.Data.SQLite", new SQLiteMigrationSqlGenerator());
         }
-
-        protected override async void Seed(AdminDashboardMVC.Models.ApplicationDbContext context)
-        {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method
-            //  to avoid creating duplicate seed data.
-
-            //await DbInitializer.Initialize(context);
-        }
     }
 }
